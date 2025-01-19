@@ -17,8 +17,29 @@
   <body>
     <script>
       function updateColor() {
-        const color = window.location.hash.slice(1) || 'white';
-        document.body.style.backgroundColor = color;
+        const hash = window.location.hash.slice(1);
+        const colors = hash.split(';');
+
+        if (colors.length === 2) {
+          const color1 = validateHex(colors[0]) ? `#${colors[0]}` : colors[0];
+          const color2 = validateHex(colors[1]) ? `#${colors[1]}` : colors[1];
+          setColor(`linear-gradient(to bottom, ${color1}, ${color2})`);
+        } else {
+          const color = hash || 'white';
+          setColor(color);
+        }
+      }
+
+      function validateHex(hex) {
+        return /^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(hex);
+      }
+
+      function setColor(color) {
+        if (validateHex(color)) {
+          document.body.style.background = `#${color}`;
+        } else {
+          document.body.style.background = color;
+        }
       }
 
       function toggleFullscreen() {
@@ -29,8 +50,9 @@
         }
       }
 
-      window.addEventListener('hashchange', updateColor);
       updateColor();
+
+      window.addEventListener('hashchange', updateColor);
       document.addEventListener('dblclick', toggleFullscreen);
     </script>
   </body>
