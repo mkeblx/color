@@ -10,11 +10,54 @@
         padding: 0;
         width: 100vw;
         height: 100vh;
-        transition: background-color 0.3s;
+        transition: background-color 0.3s, cursor 0.3s;
+        cursor: none;
+      }
+
+      body.show-ui {
+        cursor: default;
+      }
+
+      #uiPanel {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 8px;
+        display: flex;
+        gap: 8px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .swatch {
+        width: 50px;
+        height: 50px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .swatch:hover {
+        transform: scale(1.1);
+        transition: transform 0.2s;
       }
     </style>
   </head>
   <body>
+    <div id="uiPanel">
+      <div class="swatch" style="background: #ff0000" data-color="ff0000"></div>
+      <div class="swatch" style="background: #00ff00" data-color="00ff00"></div>
+      <div class="swatch" style="background: #0000ff" data-color="0000ff"></div>
+      <div class="swatch" style="background: #00ffff" data-color="00ffff"></div>
+      <div class="swatch" style="background: #ff00ff" data-color="ff00ff"></div>
+      <div class="swatch" style="background: #ffff00" data-color="ffff00"></div>
+      <div class="swatch" style="background: #ffffff" data-color="ffffff"></div>
+      <div class="swatch" style="background: #000000" data-color="000000"></div>
+    </div>
+
     <script>
       function updateColor() {
         const hash = window.location.hash.slice(1);
@@ -54,6 +97,31 @@
 
       window.addEventListener('hashchange', updateColor);
       document.addEventListener('dblclick', toggleFullscreen);
+
+      const panel = document.getElementById('uiPanel');
+      let hideTimeout;
+
+      function showPanel() {
+        panel.style.opacity = '1';
+        document.body.classList.add('show-ui');
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(() => {
+          panel.style.opacity = '0';
+          document.body.classList.remove('show-ui');
+        }, 1000);
+      }
+
+      // Add event listeners for panel visibility
+      document.addEventListener('mousemove', showPanel);
+      document.addEventListener('click', showPanel);
+
+      // Add click handlers for swatches
+      document.querySelectorAll('.swatch').forEach((swatch) => {
+        swatch.addEventListener('click', (e) => {
+          const color = e.target.dataset.color;
+          window.location.hash = color;
+        });
+      });
     </script>
   </body>
 </html>
